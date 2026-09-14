@@ -82,8 +82,9 @@ export class TokenParser {
    * Parses a DESIGN.md markdown document into a DesignSystem object
    */
   public static parseDesignMarkdown(markdown: string): DesignSystem {
+    const titleMatch = markdown.match(/^#+\s+(?:Design System:?\s*)?([^\r\n*]+)/m);
     const result: DesignSystem = {
-      name: "Imported Design System",
+      name: titleMatch ? titleMatch[1].trim() : "Imported Design System",
       version: "1.0.0",
       colors: {},
       typography: {
@@ -116,7 +117,7 @@ export class TokenParser {
       }
 
       // Token item detection (e.g. `- **primary**: #2563eb` or `| primary | #2563eb |`)
-      const listMatch = trimmed.match(/^[-*]\s+\*\*?([a-zA-Z0-9_-]+)\*\*?:\s*([^\s]+)/);
+      const listMatch = trimmed.match(/^[-*]\s+\*\*?`?([a-zA-Z0-9_-]+)`?\*\*?:\s*`?([^\s`]+)`?/);
       if (listMatch) {
         const [, key, val] = listMatch;
         if (currentCategory === "colors") result.colors[key] = val;
@@ -126,10 +127,11 @@ export class TokenParser {
         continue;
       }
 
-      const tableMatch = trimmed.match(/^\|\s*([a-zA-Z0-9_-]+)\s*\|\s*([^|]+)\s*\|/);
-      if (tableMatch && !trimmed.includes("---") && !/token|name/i.test(tableMatch[1])) {
-        const [, key, val] = tableMatch;
-        const cleanVal = val.trim();
+      const tableMatch = trimmed.match(/^\|\s*`?([a-zA-Z0-9_-]+)`?\s*\|\s*([^|]+)\s*\|/);
+      if (tableMatch && !trimmed.includes("---") && !/token|role|name/i.test(tableMatch[1])) {
+        const [, rawKey, rawVal] = tableMatch;
+        const key = rawKey.replace(/`/g, "").trim();
+        const cleanVal = rawVal.replace(/`/g, "").trim();
         if (currentCategory === "colors") result.colors[key] = cleanVal;
         else if (currentCategory === "typography") result.typography.fontFamilies[key] = cleanVal;
         else if (currentCategory === "spacing") result.spacing[key] = cleanVal;

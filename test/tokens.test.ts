@@ -58,5 +58,11 @@ describe("TokenParser", () => {
     const generated = TokenParser.generateDesignMarkdown(parsed);
     expect(generated).toContain("## Colors");
     expect(generated).toContain("`primary`");
+
+    // Roundtrip verification: parse the generated markdown back
+    const roundtrip = TokenParser.parseDesignMarkdown(generated);
+    expect(roundtrip.name).toBe("Acme");
+    expect(roundtrip.colors.primary).toBe("#3b82f6");
+    expect(roundtrip.colors.background).toBe("#09090b");
   });
 });

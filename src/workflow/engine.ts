@@ -11,6 +11,7 @@ import { TrajectoryManager } from "../trajectory/manager.js";
 import { TokenParser } from "../tokens/parser.js";
 import { ComponentValidator } from "../ast/validator.js";
 import { StitchDesignProvider } from "../mcp/stitch-client.js";
+import { OllamaDesignProvider } from "../providers/ollama-provider.js";
 
 export interface SddDesignConfig {
   baseDir?: string;
@@ -30,8 +31,31 @@ export class SddDesignEngine {
     this.baseDir = config.baseDir || process.cwd();
     this.currentProjectId = config.projectId || "default-stitch-project";
     const projectName = config.projectName || path.basename(this.baseDir);
-    this.provider = config.provider || new StitchDesignProvider({ baseDir: this.baseDir });
+    this.provider = config.provider || this.resolveProvider();
     this.trajectory = new TrajectoryManager(this.baseDir, this.currentProjectId, projectName);
+  }
+
+  private resolveProvider(): DesignProvider {
+    const envPath = path.join(this.baseDir, ".env");
+    let envContent = "";
+    if (fs.existsSync(envPath)) {
+      envContent = fs.readFileSync(envPath, "utf-8");
+    }
+
+    const hasStitchKey =
+      Boolean(process.env.STITCH_API_KEY) ||
+      /STITCH_API_KEY\s*=\s*[^\r\n]+/.test(envContent);
+
+    const hasOllama =
+      Boolean(process.env.OLLAMA_MODEL) ||
+      Boolean(process.env.OLLAMA_BASE_URL) ||
+      /OLLAMA_(?:MODEL|BASE_URL)\s*=\s*[^\r\n]+/.test(envContent);
+
+    if (!hasStitchKey && hasOllama) {
+      return new OllamaDesignProvider({ baseDir: this.baseDir });
+    }
+
+    return new StitchDesignProvider({ baseDir: this.baseDir });
   }
 
   /**
