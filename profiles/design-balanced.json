@@ -1,0 +1,24 @@
+{
+  "name": "design-balanced",
+  "description": "Equilibrio costo/calidad para SDD de Diseño en Pi Coding Agent",
+  "default_model": "anthropic/claude-3-7-sonnet",
+  "default_effort": "medium",
+  "model_profiles": {
+    "design-architect": {
+      "model": "anthropic/claude-3-7-sonnet",
+      "effort": "high"
+    },
+    "stitch-builder": {
+      "model": "google/gemini-2.5-flash",
+      "effort": "low"
+    },
+    "taste-critic": {
+      "model": "google/gemini-2.5-pro",
+      "effort": "high"
+    },
+    "component-crafter": {
+      "model": "anthropic/claude-3-7-sonnet",
+      "effort": "medium"
+    }
+  }
+}

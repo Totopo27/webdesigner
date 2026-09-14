@@ -1,0 +1,29 @@
+{
+  "name": "pi-sdd-design",
+  "version": "0.1.0",
+  "description": "Design-Driven Spec-Driven Development (SDD) extension for Pi Coding Agent with Google Stitch MCP, Trajectory tracking and Clean Architecture componentization",
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "pi-extension",
+    "pi-package",
+    "sdd",
+    "design-system",
+    "stitch",
+    "gentle-pi",
+    "gentle-ai"
+  ],
+  "author": "Gustavo / Gentleman Programming Community",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}
