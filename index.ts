@@ -4,6 +4,7 @@
 
 import * as path from "node:path";
 import { SddDesignEngine } from "./src/workflow/engine.js";
+import { startStudioServer } from "./src/server/studio.js";
 
 export { SddDesignEngine } from "./src/workflow/engine.js";
 export { TrajectoryManager } from "./src/trajectory/manager.js";
@@ -12,6 +13,7 @@ export { ComponentValidator } from "./src/ast/validator.js";
 export { StitchDesignProvider } from "./src/mcp/stitch-client.js";
 export { OllamaDesignProvider } from "./src/providers/ollama-provider.js";
 export { VisualDiffer } from "./src/visual/differ.js";
+export { StudioServer, startStudioServer } from "./src/server/studio.js";
 export * from "./src/types/index.js";
 
 export default function sddDesignExtension(pi: any): void {
@@ -221,6 +223,32 @@ export default function sddDesignExtension(pi: any): void {
         else console.log(msg);
       } catch (err: any) {
         const errMsg = `❌ Error exporting theme files: ${err.message}`;
+        if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
+        else console.error(errMsg);
+      }
+    },
+  });
+
+  // 9. Command: /design:studio [port]
+  pi.registerCommand?.("design:studio", {
+    description: "Launch the interactive Design Studio & Trajectory Web Viewer",
+    handler: async (args: string[], ctx: any) => {
+      const port = parseInt(args[0], 10) || 3000;
+      const cwd = ctx?.cwd ?? process.cwd();
+      try {
+        startStudioServer(port, "0.0.0.0", cwd);
+        const msg = [
+          `🎨 **pi-sdd-design Studio Launched!**`,
+          `- **Local PC:** [\`http://localhost:${port}\`](http://localhost:${port})`,
+          `- **Mobile (LAN):** \`http://192.168.100.11:${port}\``,
+          "",
+          `Open in your browser to inspect visual diffs, device viewports, and generate screens interactively!`,
+        ].join("\n");
+
+        if (ctx?.ui?.notify) ctx.ui.notify(msg);
+        else console.log(msg);
+      } catch (err: any) {
+        const errMsg = `❌ Error starting Design Studio: ${err.message}`;
         if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
         else console.error(errMsg);
       }

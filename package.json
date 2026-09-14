@@ -10,6 +10,7 @@
     "test:watch": "vitest",
     "test:e2e": "tsx scripts/test-product-generation.ts",
     "serve": "tsx scripts/serve-demo.ts",
+    "studio": "tsx scripts/serve-demo.ts",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
