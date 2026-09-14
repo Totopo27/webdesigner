@@ -17,6 +17,16 @@ export class TokenParser {
       borderRadius: {},
     };
 
+    // 0. Look for Tailwind v4 @theme style blocks in HTML
+    const v4Match = html.match(/@theme\s*\{([\s\S]*?)\}/i);
+    if (v4Match) {
+      const v4Parsed = this.parseTailwindV4Theme(v4Match[0], systemName);
+      result.colors = { ...result.colors, ...v4Parsed.colors };
+      result.typography.fontFamilies = { ...result.typography.fontFamilies, ...v4Parsed.typography.fontFamilies };
+      result.spacing = { ...result.spacing, ...v4Parsed.spacing };
+      result.borderRadius = { ...result.borderRadius, ...v4Parsed.borderRadius };
+    }
+
     // 1. Look for tailwind.config script block
     const twMatch = html.match(/tailwind\.config\s*=\s*(\{[\s\S]*?\});/);
     if (twMatch && twMatch[1]) {
@@ -210,5 +220,136 @@ export default {
   },
 };
 `;
+  }
+
+  /**
+   * Generates a modern Tailwind v4 @theme CSS block
+   */
+  public static generateTailwindV4Theme(system: DesignSystem): string {
+    const lines: string[] = [
+      `/* Tailwind v4 Theme: ${system.name} */`,
+      `@theme {`,
+    ];
+
+    if (Object.keys(system.colors).length > 0) {
+      lines.push(`  /* Colors */`);
+      for (const [key, val] of Object.entries(system.colors)) {
+        lines.push(`  --color-${key}: ${val};`);
+      }
+    }
+
+    if (Object.keys(system.typography.fontFamilies).length > 0) {
+      lines.push("");
+      lines.push(`  /* Typography */`);
+      for (const [key, val] of Object.entries(system.typography.fontFamilies)) {
+        lines.push(`  --font-${key}: ${val};`);
+      }
+    }
+
+    if (Object.keys(system.spacing).length > 0) {
+      lines.push("");
+      lines.push(`  /* Spacing */`);
+      for (const [key, val] of Object.entries(system.spacing)) {
+        lines.push(`  --spacing-${key}: ${val};`);
+      }
+    }
+
+    if (Object.keys(system.borderRadius).length > 0) {
+      lines.push("");
+      lines.push(`  /* Border Radius */`);
+      for (const [key, val] of Object.entries(system.borderRadius)) {
+        lines.push(`  --radius-${key}: ${val};`);
+      }
+    }
+
+    lines.push(`}`);
+    return lines.join("\n");
+  }
+
+  /**
+   * Generates standard :root CSS variables compatible with shadcn/ui and modern CSS
+   */
+  public static generateCssVariables(system: DesignSystem): string {
+    const lines: string[] = [
+      `/* Design System Variables: ${system.name} */`,
+      `:root {`,
+    ];
+
+    for (const [key, val] of Object.entries(system.colors)) {
+      lines.push(`  --${key}: ${val};`);
+    }
+
+    for (const [key, val] of Object.entries(system.typography.fontFamilies)) {
+      lines.push(`  --font-${key}: ${val};`);
+    }
+
+    if (system.borderRadius.default) {
+      lines.push(`  --radius: ${system.borderRadius.default};`);
+    } else if (Object.keys(system.borderRadius).length > 0) {
+      const first = Object.values(system.borderRadius)[0];
+      lines.push(`  --radius: ${first};`);
+    }
+
+    lines.push(`}`);
+    return lines.join("\n");
+  }
+
+  /**
+   * Parses Tailwind v4 @theme or CSS custom properties into a DesignSystem object
+   */
+  public static parseTailwindV4Theme(css: string, systemName: string = "Tailwind v4 Theme"): DesignSystem {
+    const result: DesignSystem = {
+      name: systemName,
+      version: "1.0.0",
+      colors: {},
+      typography: {
+        fontFamilies: {},
+        fontSizes: {},
+      },
+      spacing: {},
+      borderRadius: {},
+    };
+
+    // 1. Color variables: --color-primary: #123; or --primary: #123;
+    const colorMatches = css.matchAll(/--(?:color-)?([a-zA-Z0-9_-]+):\s*([^;]+);/g);
+    for (const match of colorMatches) {
+      const prop = match[1];
+      const val = match[2].trim();
+
+      if (
+        prop.startsWith("font-") ||
+        prop === "radius" ||
+        prop.startsWith("radius-") ||
+        prop.startsWith("spacing-")
+      ) {
+        continue;
+      }
+
+      // Check if value looks like a color (hex, rgb, hsl, oklch, var)
+      if (/^#|[0-9a-fA-F]{3,8}|rgb|hsl|oklch/i.test(val)) {
+        result.colors[prop] = val;
+      }
+    }
+
+    // 2. Font variables: --font-sans: Inter, sans-serif;
+    const fontMatches = css.matchAll(/--font-([a-zA-Z0-9_-]+):\s*([^;]+);/g);
+    for (const match of fontMatches) {
+      result.typography.fontFamilies[match[1]] = match[2].trim();
+    }
+
+    // 3. Spacing variables: --spacing-1: 0.25rem;
+    const spacingMatches = css.matchAll(/--spacing-([a-zA-Z0-9_-]+):\s*([^;]+);/g);
+    for (const match of spacingMatches) {
+      result.spacing[match[1]] = match[2].trim();
+    }
+
+    // 4. Radius variables: --radius-md: 0.375rem; or --radius: 0.5rem;
+    const radiusMatches = css.matchAll(/--radius(?:-([a-zA-Z0-9_-]+))?:\s*([^;]+);/g);
+    for (const match of radiusMatches) {
+      const key = match[1] || "default";
+      result.borderRadius[key] = match[2].trim();
+    }
+
+    return result;
   }
 }

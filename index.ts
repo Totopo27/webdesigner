@@ -2,6 +2,7 @@
  * pi-sdd-design - Spec-Driven Development of Design & Frontend for Pi Coding Agent
  */
 
+import * as path from "node:path";
 import { SddDesignEngine } from "./src/workflow/engine.js";
 
 export { SddDesignEngine } from "./src/workflow/engine.js";
@@ -194,6 +195,32 @@ export default function sddDesignExtension(pi: any): void {
         else console.log(msg);
       } catch (err: any) {
         const errMsg = `❌ Error computing visual diff: ${err.message}`;
+        if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
+        else console.error(errMsg);
+      }
+    },
+  });
+
+  // 8. Command: /design:export
+  pi.registerCommand?.("design:export", {
+    description: "Export design tokens to Tailwind v4 @theme, standard CSS variables, and legacy config",
+    handler: async (_args: string[], ctx: any) => {
+      const engine = getEngine(ctx);
+      try {
+        const paths = engine.exportThemeFiles();
+        const msg = [
+          `🎨 **Design System Tokens Exported!**`,
+          `- **Tailwind v4 (@theme):** \`${path.relative(process.cwd(), paths.v4ThemePath)}\``,
+          `- **CSS Variables (:root):** \`${path.relative(process.cwd(), paths.cssVariablesPath)}\``,
+          `- **Tailwind v3 Config:** \`${path.relative(process.cwd(), paths.v3ConfigPath)}\``,
+          "",
+          `Use \`@import "./.stitch/theme-v4.css";\` in your main CSS file for instant Tailwind v4 compatibility.`,
+        ].join("\n");
+
+        if (ctx?.ui?.notify) ctx.ui.notify(msg);
+        else console.log(msg);
+      } catch (err: any) {
+        const errMsg = `❌ Error exporting theme files: ${err.message}`;
         if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
         else console.error(errMsg);
       }

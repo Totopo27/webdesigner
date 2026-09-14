@@ -1,0 +1,13 @@
+/* Design System Variables: CryptoVault Modern Design System */
+:root {
+  --primary: #3b82f6;
+  --secondary: #64748b;
+  --accent: #f59e0b;
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --card: #1e293b;
+  --muted: #334155;
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-heading: Plus Jakarta Sans, sans-serif;
+  --radius: 0.25rem;
+}

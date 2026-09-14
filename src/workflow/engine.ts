@@ -377,4 +377,34 @@ export const mock${componentName}Data = {
   public getTrajectoryReport(): string {
     return this.trajectory.toMarkdownSummary();
   }
+
+  /**
+   * Exports design tokens into Tailwind v4 @theme, standard CSS variables, and legacy config
+   */
+  public exportThemeFiles(outDir?: string): {
+    v4ThemePath: string;
+    cssVariablesPath: string;
+    v3ConfigPath: string;
+  } {
+    const targetDir = outDir || path.join(this.baseDir, ".stitch");
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    const system = this.currentDesignSystem || this.initDesignSystem();
+
+    const v4ThemePath = path.join(targetDir, "theme-v4.css");
+    const cssVariablesPath = path.join(targetDir, "variables.css");
+    const v3ConfigPath = path.join(targetDir, "tailwind.config.js");
+
+    fs.writeFileSync(v4ThemePath, TokenParser.generateTailwindV4Theme(system), "utf-8");
+    fs.writeFileSync(cssVariablesPath, TokenParser.generateCssVariables(system), "utf-8");
+    fs.writeFileSync(v3ConfigPath, TokenParser.generateTailwindConfigSnippet(system), "utf-8");
+
+    return {
+      v4ThemePath,
+      cssVariablesPath,
+      v3ConfigPath,
+    };
+  }
 }
