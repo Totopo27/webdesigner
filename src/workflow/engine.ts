@@ -53,11 +53,15 @@ export class SddDesignEngine {
       Boolean(process.env.OLLAMA_BASE_URL) ||
       /OLLAMA_(?:MODEL|BASE_URL)\s*=\s*[^\r\n]+/.test(envContent);
 
-    if (!hasStitchKey && hasOllama) {
+    if (hasOllama) {
       return new OllamaDesignProvider({ baseDir: this.baseDir });
     }
 
-    return new StitchDesignProvider({ baseDir: this.baseDir });
+    if (hasStitchKey) {
+      return new StitchDesignProvider({ baseDir: this.baseDir });
+    }
+
+    return new OllamaDesignProvider({ baseDir: this.baseDir });
   }
 
   /**

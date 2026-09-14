@@ -7,6 +7,7 @@ import type {
   DesignSystem,
 } from "../types/index.js";
 import { TokenParser } from "../tokens/parser.js";
+import { OllamaDesignProvider } from "../providers/ollama-provider.js";
 
 export interface StitchClientOptions {
   apiKey?: string;
@@ -137,7 +138,9 @@ export class StitchDesignProvider implements DesignProvider {
     }
 
     if (!htmlContent) {
-      htmlContent = `<!DOCTYPE html><html><head><title>${screenTitle}</title></head><body><div id="app" class="p-8"><h1 class="text-2xl font-bold">${screenTitle}</h1><p>${prompt}</p></div></body></html>`;
+      console.warn("[StitchClient] No direct HTML received, delegating to Ollama local GPU provider...");
+      const ollama = new OllamaDesignProvider({ baseDir: this.baseDir });
+      return ollama.generateScreen(projectId, prompt, options);
     }
 
     // Save locally into .stitch/designs
