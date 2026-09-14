@@ -45,7 +45,17 @@ export class ComponentValidator {
     // 2. Check for required Props interface
     const isComponentFile = /\.(?:tsx|jsx)$/.test(filePath);
     if (isComponentFile) {
-      const hasPropsInterface = /(?:interface|type)\s+[a-zA-Z0-9_]*Props\b/.test(sourceCode);
+      let propsDefinition = sourceCode;
+      const importedPropsMatch = sourceCode.match(/import\s+(?:type\s+)?\{[^}]*([a-zA-Z0-9_]*Props)[^}]*\}\s+from\s+["'](\.[^"']+)["']/);
+      if (importedPropsMatch) {
+        const importRelative = importedPropsMatch[2].replace(/\.js$/, "");
+        const siblingPath = path.resolve(path.dirname(filePath), `${importRelative}.ts`);
+        if (fs.existsSync(siblingPath)) {
+          propsDefinition = fs.readFileSync(siblingPath, "utf-8");
+        }
+      }
+
+      const hasPropsInterface = /(?:interface|type)\s+[a-zA-Z0-9_]*Props\b/.test(propsDefinition);
       if (!hasPropsInterface) {
         violations.push({
           file: filePath,
@@ -57,7 +67,7 @@ export class ComponentValidator {
         });
       } else {
         // 3. Check for Readonly usage in Props
-        const hasReadonly = /Readonly<|readonly\s+[a-zA-Z0-9_]+:/.test(sourceCode);
+        const hasReadonly = /Readonly<|readonly\s+[a-zA-Z0-9_]+:/.test(propsDefinition);
         if (!hasReadonly) {
           violations.push({
             file: filePath,

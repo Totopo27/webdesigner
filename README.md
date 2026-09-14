@@ -67,6 +67,30 @@ Integrated out of the box with [pi-sdd-profiles](https://github.com/CinloDev/pi-
 - **`design-visionary`**:
   - Full multimodal reasoning with Gemini 2.5 Pro + Claude 3.7 Sonnet.
 
+- **`design-local-ollama`** (100% Offline / Local GPU):
+  - Local code and design generation using Ollama (`richardyoung/qwen2.5-coder-14b-instruct-abliterated` or compatible) with zero cloud vendor lock-in.
+
+---
+
+## ⚡ Dual-Engine: Google Stitch MCP + Local Ollama
+
+`pi-sdd-design` supports both cloud-based **Google Stitch MCP** and **local offline LLMs via Ollama**:
+
+```env
+# Cloud Stitch
+STITCH_API_KEY=AQ.Ab8RN6...
+
+# Local / Private Ollama (optional)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=richardyoung/qwen2.5-coder-14b-instruct-abliterated
+OLLAMA_API_KEY=your_key_here  # If using an authenticated proxy/gateway
+```
+
+Run the end-to-end product generation test on your local GPU:
+```bash
+npm run test:e2e
+```
+
 ---
 
 ## 🛡️ Architectural Gates (AST Enforcement)
@@ -88,19 +112,24 @@ pi-sdd-design/
 ├── tsconfig.json
 ├── profiles/                  # Model profiles for pi-sdd-profiles
 │   ├── design-balanced.json
-│   └── design-visionary.json
+│   ├── design-visionary.json
+│   └── design-local-ollama.json
 ├── subagents/                 # Specialized Pi subagents
 │   ├── design-architect.json
 │   ├── stitch-builder.json
 │   ├── taste-critic.json
 │   └── component-crafter.json
+├── scripts/
+│   └── test-product-generation.ts # E2E generation & AST audit with Ollama
 ├── src/
 │   ├── types/                 # Pluggable Provider & CodeTarget interfaces
 │   ├── trajectory/            # Immutable version history (.stitch/trajectory.json)
 │   ├── tokens/                # DESIGN.md & Tailwind parser
 │   ├── ast/                   # Architectural rule validator
 │   ├── mcp/                   # Google Stitch JSON-RPC client
-│   └── workflow/              # SDD Design DAG engine
+│   ├── providers/             # Ollama & Stitch providers
+│   ├── workflow/              # SDD Design DAG engine
+│   └── components/            # Generated Clean Architecture React components
 └── test/                      # Vitest unit tests
 ```
 
