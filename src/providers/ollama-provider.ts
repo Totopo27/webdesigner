@@ -26,7 +26,10 @@ export class OllamaDesignProvider implements DesignProvider {
 
   constructor(options: OllamaProviderOptions = {}) {
     this.baseUrl = options.baseUrl || process.env.OLLAMA_BASE_URL || "http://localhost:11434";
-    this.model = options.model || process.env.OLLAMA_MODEL || "qwen2.5-coder:14b";
+    this.model =
+      options.model ||
+      process.env.OLLAMA_MODEL ||
+      "richardyoung/qwen2.5-coder-14b-instruct-abliterated";
     this.baseDir = options.baseDir || process.cwd();
   }
 

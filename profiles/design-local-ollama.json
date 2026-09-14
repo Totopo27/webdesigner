@@ -1,7 +1,7 @@
 {
   "name": "design-local-ollama",
-  "description": "SDD de Diseño 100% privado y offline con Ollama (Qwen2.5-Coder + DeepSeek-R1)",
-  "default_model": "ollama/qwen2.5-coder:14b",
+  "description": "SDD de Diseño 100% privado y offline con Ollama (Qwen2.5-Coder-14B Abliterated + DeepSeek-R1)",
+  "default_model": "ollama/richardyoung/qwen2.5-coder-14b-instruct-abliterated",
   "default_effort": "high",
   "model_profiles": {
     "design-architect": {
@@ -9,7 +9,7 @@
       "effort": "high"
     },
     "stitch-builder": {
-      "model": "ollama/qwen2.5-coder:7b",
+      "model": "ollama/richardyoung/qwen2.5-coder-14b-instruct-abliterated",
       "effort": "low"
     },
     "taste-critic": {
@@ -17,7 +17,7 @@
       "effort": "high"
     },
     "component-crafter": {
-      "model": "ollama/qwen2.5-coder:14b",
+      "model": "ollama/richardyoung/qwen2.5-coder-14b-instruct-abliterated",
       "effort": "medium"
     }
   }
