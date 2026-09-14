@@ -157,11 +157,6 @@ Ensure semantic HTML, accessible color contrasts, and clean visual hierarchy.`;
 
     fs.writeFileSync(localHtmlPath, htmlContent, "utf-8");
 
-    // Touch empty or placeholder screenshot
-    if (!fs.existsSync(localScreenshotPath)) {
-      fs.writeFileSync(localScreenshotPath, Buffer.from(""));
-    }
-
     return {
       screenId,
       projectId,

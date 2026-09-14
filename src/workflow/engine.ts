@@ -6,12 +6,14 @@ import type {
   ScreenArtifact,
   TasteReviewVerdict,
   TransformResult,
+  VisualDiffResult,
 } from "../types/index.js";
 import { TrajectoryManager } from "../trajectory/manager.js";
 import { TokenParser } from "../tokens/parser.js";
 import { ComponentValidator } from "../ast/validator.js";
 import { StitchDesignProvider } from "../mcp/stitch-client.js";
 import { OllamaDesignProvider } from "../providers/ollama-provider.js";
+import { VisualDiffer } from "../visual/differ.js";
 
 export interface SddDesignConfig {
   baseDir?: string;
@@ -126,13 +128,59 @@ export class SddDesignEngine {
    */
   public async generateScreen(
     prompt: string,
-    options: { deviceType?: "DESKTOP" | "MOBILE" | "TABLET" } = {}
-  ): Promise<{ artifact: ScreenArtifact; iterationNumber: number }> {
+    options: { deviceType?: "DESKTOP" | "MOBILE" | "TABLET"; skipDiff?: boolean } = {}
+  ): Promise<{ artifact: ScreenArtifact; iterationNumber: number; visualDiff?: VisualDiffResult }> {
     const artifact = await this.provider.generateScreen(this.currentProjectId, prompt, options);
 
     const safeId = artifact.screenId.replace(/[^a-zA-Z0-9_-]/g, "_");
     const localHtml = `.stitch/designs/${safeId}.html`;
     const localPng = `.stitch/designs/${safeId}.png`;
+
+    const absHtml = path.join(this.baseDir, localHtml);
+    const absPng = path.join(this.baseDir, localPng);
+
+    // If screenshot does not exist or is empty, capture it headlessly via VisualDiffer
+    const isPngValid = fs.existsSync(absPng) && fs.statSync(absPng).size > 0;
+    if (!isPngValid && fs.existsSync(absHtml)) {
+      try {
+        await VisualDiffer.captureScreenshot(absHtml, absPng);
+      } catch (err: any) {
+        console.warn(`[Engine] Headless screenshot capture skipped: ${err.message}`);
+      }
+    }
+
+    // Compare with previous iteration if available
+    let visualDiff: VisualDiffResult | undefined;
+    const history = this.trajectory.getTrajectory().history;
+    const prevEntry = history.length > 0 ? history[history.length - 1] : null;
+
+    if (!options.skipDiff && prevEntry && fs.existsSync(absPng) && fs.statSync(absPng).size > 0) {
+      const prevAbsPng = path.join(this.baseDir, prevEntry.localScreenshotPath);
+      const prevAbsHtml = path.join(this.baseDir, prevEntry.localHtmlPath);
+
+      // Self-heal previous screenshot if missing or empty
+      if ((!fs.existsSync(prevAbsPng) || fs.statSync(prevAbsPng).size === 0) && fs.existsSync(prevAbsHtml)) {
+        try {
+          await VisualDiffer.captureScreenshot(prevAbsHtml, prevAbsPng);
+        } catch {
+          // Ignore
+        }
+      }
+
+      if (fs.existsSync(prevAbsPng) && fs.statSync(prevAbsPng).size > 0) {
+        try {
+          const nextIterationNumber = history.length + 1;
+          const diffRel = `.stitch/designs/diff-iter-${prevEntry.iteration}-vs-${nextIterationNumber}.png`;
+          const diffAbs = path.join(this.baseDir, diffRel);
+          visualDiff = VisualDiffer.compareScreenshots(prevAbsPng, absPng, diffAbs, {
+            baselineIteration: prevEntry.iteration,
+            currentIteration: nextIterationNumber,
+          });
+        } catch (err: any) {
+          console.warn(`[Engine] Visual diff comparison skipped: ${err.message}`);
+        }
+      }
+    }
 
     const entry = this.trajectory.recordIteration({
       prompt,
@@ -140,12 +188,37 @@ export class SddDesignEngine {
       screenshotUrl: artifact.screenshotUrl,
       localHtmlPath: localHtml,
       localScreenshotPath: localPng,
+      visualDiff,
     });
 
     return {
       artifact,
       iterationNumber: entry.iteration,
+      visualDiff,
     };
+  }
+
+  /**
+   * Compares two specific iterations by number
+   */
+  public diffIterations(iterA: number, iterB: number): VisualDiffResult {
+    const history = this.trajectory.getTrajectory().history;
+    const entryA = history.find((h) => h.iteration === iterA);
+    const entryB = history.find((h) => h.iteration === iterB);
+
+    if (!entryA || !entryB) {
+      throw new Error(`Iterations #${iterA} and/or #${iterB} not found in trajectory history.`);
+    }
+
+    const pathA = path.join(this.baseDir, entryA.localScreenshotPath);
+    const pathB = path.join(this.baseDir, entryB.localScreenshotPath);
+    const diffRel = `.stitch/designs/diff-iter-${iterA}-vs-${iterB}.png`;
+    const diffAbs = path.join(this.baseDir, diffRel);
+
+    return VisualDiffer.compareScreenshots(pathA, pathB, diffAbs, {
+      baselineIteration: iterA,
+      currentIteration: iterB,
+    });
   }
 
   /**

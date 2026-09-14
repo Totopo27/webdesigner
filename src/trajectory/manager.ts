@@ -4,6 +4,7 @@ import type {
   DesignTrajectory,
   DesignTrajectoryEntry,
   TasteReviewVerdict,
+  VisualDiffResult,
 } from "../types/index.js";
 
 export class TrajectoryManager {
@@ -57,6 +58,7 @@ export class TrajectoryManager {
     localHtmlPath: string;
     localScreenshotPath: string;
     tasteReview?: TasteReviewVerdict;
+    visualDiff?: VisualDiffResult;
     componentChanges?: string[];
   }): DesignTrajectoryEntry {
     const nextIteration = this.trajectory.history.length + 1;
@@ -70,6 +72,7 @@ export class TrajectoryManager {
       localHtmlPath: params.localHtmlPath,
       localScreenshotPath: params.localScreenshotPath,
       tasteReview: params.tasteReview,
+      visualDiff: params.visualDiff,
       componentChanges: params.componentChanges ?? [],
     };
 
@@ -77,6 +80,14 @@ export class TrajectoryManager {
     this.trajectory.activeIteration = nextIteration;
     this.save(this.trajectory);
     return entry;
+  }
+
+  public updateVisualDiff(iterationNumber: number, diff: VisualDiffResult): boolean {
+    const entry = this.trajectory.history.find((h) => h.iteration === iterationNumber);
+    if (!entry) return false;
+    entry.visualDiff = diff;
+    this.save(this.trajectory);
+    return true;
   }
 
   public updateTasteReview(iterationNumber: number, verdict: TasteReviewVerdict): boolean {
@@ -137,6 +148,14 @@ export class TrajectoryManager {
         if (entry.tasteReview.critiqueNotes.length > 0) {
           lines.push(`  - Notes: ${entry.tasteReview.critiqueNotes.join("; ")}`);
         }
+      }
+
+      if (entry.visualDiff) {
+        const diffIcon = entry.visualDiff.hasDifference ? "📊" : "🎯";
+        lines.push(
+          `- **Visual Regression (vs #${entry.visualDiff.baselineIteration}):** ${diffIcon} ${entry.visualDiff.diffPercentage}% pixel shift (${entry.visualDiff.diffPixelCount.toLocaleString()} changed pixels)`
+        );
+        lines.push(`  - Diff Artifact: \`${entry.visualDiff.diffImagePath}\``);
       }
 
       if (entry.componentChanges && entry.componentChanges.length > 0) {

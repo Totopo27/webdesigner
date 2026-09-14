@@ -26,13 +26,18 @@ async function main() {
   console.log("🤖 [Fase 2] Generando pantalla de UI con Ollama en GPU local...");
   const prompt = "Modern Web3 DeFi Dashboard with total portfolio value card, crypto asset distribution, quick swap widget, and recent transactions table with dark theme";
   const startGen = Date.now();
-  const { artifact, iterationNumber } = await engine.generateScreen(prompt);
+  const { artifact, iterationNumber, visualDiff } = await engine.generateScreen(prompt);
   const genDuration = ((Date.now() - startGen) / 1000).toFixed(2);
 
   console.log(`   ✅ Pantalla generada en ${genDuration}s!`);
   console.log(`   📄 ID: ${artifact.screenId}`);
   console.log(`   🌐 HTML generado: ${artifact.htmlContent.length} bytes`);
-  console.log(`   💾 Iteración registrada: #${iterationNumber}\n`);
+  console.log(`   💾 Iteración registrada: #${iterationNumber}`);
+  if (visualDiff) {
+    console.log(`   📊 Visual Regression vs #${visualDiff.baselineIteration}: ${visualDiff.diffPercentage}% pixel shift (${visualDiff.diffPixelCount.toLocaleString()} px)`);
+    console.log(`   🖼️ Diff Artifact: ${visualDiff.diffImagePath}`);
+  }
+  console.log("");
 
   // 3. Fase 3: Auditoría Estética y Accesibilidad (Taste Critic)
   console.log("⚖️ [Fase 3] Ejecutando Judgment Day: Auditoría visual y accesibilidad...");

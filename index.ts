@@ -10,6 +10,7 @@ export { TokenParser } from "./src/tokens/parser.js";
 export { ComponentValidator } from "./src/ast/validator.js";
 export { StitchDesignProvider } from "./src/mcp/stitch-client.js";
 export { OllamaDesignProvider } from "./src/providers/ollama-provider.js";
+export { VisualDiffer } from "./src/visual/differ.js";
 export * from "./src/types/index.js";
 
 export default function sddDesignExtension(pi: any): void {
@@ -149,6 +150,53 @@ export default function sddDesignExtension(pi: any): void {
       const report = engine.getTrajectoryReport();
       if (ctx?.ui?.notify) ctx.ui.notify(report);
       else console.log(report);
+    },
+  });
+
+  // 7. Command: /design:diff [iterA] [iterB]
+  pi.registerCommand?.("design:diff", {
+    description: "Compare visual diff between iterations and show pixel shift metrics",
+    handler: async (args: string[], ctx: any) => {
+      const engine = getEngine(ctx);
+      try {
+        const history = engine.trajectory.getTrajectory().history;
+        if (history.length < 2) {
+          const warn = "⚠️ At least two design iterations are required to compute a visual diff.";
+          if (ctx?.ui?.notify) ctx.ui.notify(warn);
+          else console.log(warn);
+          return;
+        }
+
+        let iterA = parseInt(args[0], 10);
+        let iterB = parseInt(args[1], 10);
+
+        if (isNaN(iterA) || isNaN(iterB)) {
+          // Default: compare active against immediate predecessor
+          const active = engine.trajectory.getActiveIteration();
+          iterB = active ? active.iteration : history[history.length - 1].iteration;
+          iterA = iterB > 1 ? iterB - 1 : 1;
+        }
+
+        const diffResult = engine.diffIterations(iterA, iterB);
+        const icon = diffResult.hasDifference ? "📊" : "🎯";
+        const msg = [
+          `🎨 **Visual Regression Diff: Iteration #${iterA} ➔ #${iterB}**`,
+          `- **Status:** ${icon} ${diffResult.diffPercentage}% pixel shift`,
+          `- **Changed Pixels:** ${diffResult.diffPixelCount.toLocaleString()} / ${diffResult.totalPixels.toLocaleString()}`,
+          `- **Diff Artifact:** \`${diffResult.diffImagePath}\``,
+          "",
+          diffResult.hasDifference
+            ? `*Visual differences are highlighted in neon magenta on \`${diffResult.diffImagePath}\`.*`
+            : `*Both iterations are pixel-identical!*`,
+        ].join("\n");
+
+        if (ctx?.ui?.notify) ctx.ui.notify(msg);
+        else console.log(msg);
+      } catch (err: any) {
+        const errMsg = `❌ Error computing visual diff: ${err.message}`;
+        if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
+        else console.error(errMsg);
+      }
     },
   });
 }

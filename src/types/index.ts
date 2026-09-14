@@ -109,6 +109,19 @@ export interface TasteReviewVerdict {
 }
 
 /**
+ * Visual Regression and Diff Result
+ */
+export interface VisualDiffResult {
+  hasDifference: boolean;
+  diffPixelCount: number;
+  totalPixels: number;
+  diffPercentage: number;
+  diffImagePath: string;
+  baselineIteration: number;
+  currentIteration: number;
+}
+
+/**
  * Design Trajectory Entry (Immutable version history)
  * Inspired by deepseek-harness trajectory event logs
  */
@@ -122,6 +135,7 @@ export interface DesignTrajectoryEntry {
   localHtmlPath: string;
   localScreenshotPath: string;
   tasteReview?: TasteReviewVerdict;
+  visualDiff?: VisualDiffResult;
   componentChanges?: string[];
 }
 
