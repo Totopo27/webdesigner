@@ -10,6 +10,7 @@ import { TokenParser } from "../tokens/parser.js";
 
 export interface OllamaProviderOptions {
   baseUrl?: string;
+  apiKey?: string;
   model?: string;
   baseDir?: string;
 }
@@ -21,16 +22,50 @@ export interface OllamaProviderOptions {
 export class OllamaDesignProvider implements DesignProvider {
   public readonly name = "ollama";
   private readonly baseUrl: string;
+  private readonly apiKey: string;
   private readonly model: string;
   private readonly baseDir: string;
 
   constructor(options: OllamaProviderOptions = {}) {
-    this.baseUrl = options.baseUrl || process.env.OLLAMA_BASE_URL || "http://localhost:11434";
+    this.baseDir = options.baseDir || process.cwd();
+    const envVars = this.readEnv(this.baseDir);
+
+    const rawUrl =
+      options.baseUrl ||
+      process.env.OLLAMA_BASE_URL ||
+      envVars.OLLAMA_BASE_URL ||
+      "http://localhost:11434";
+    // Strip trailing /v1 or slashes to ensure standard /api/generate endpoint resolution
+    this.baseUrl = rawUrl.replace(/\/v1\/?$/, "").replace(/\/+$/, "");
+
+    this.apiKey =
+      options.apiKey ||
+      process.env.OLLAMA_API_KEY ||
+      envVars.OLLAMA_API_KEY ||
+      "";
+
     this.model =
       options.model ||
       process.env.OLLAMA_MODEL ||
+      envVars.OLLAMA_MODEL ||
       "richardyoung/qwen2.5-coder-14b-instruct-abliterated";
-    this.baseDir = options.baseDir || process.cwd();
+  }
+
+  private readEnv(dir: string): Record<string, string> {
+    const envPath = path.join(dir, ".env");
+    const result: Record<string, string> = {};
+    if (fs.existsSync(envPath)) {
+      const lines = fs.readFileSync(envPath, "utf-8").split("\n");
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("#")) continue;
+        const eqIdx = trimmed.indexOf("=");
+        if (eqIdx !== -1) {
+          result[trimmed.slice(0, eqIdx).trim()] = trimmed.slice(eqIdx + 1).trim();
+        }
+      }
+    }
+    return result;
   }
 
   public async createProject(title: string): Promise<string> {
@@ -56,9 +91,14 @@ Ensure semantic HTML, accessible color contrasts, and clean visual hierarchy.`;
     let htmlContent = "";
 
     try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (this.apiKey) {
+        headers["Authorization"] = `Bearer ${this.apiKey}`;
+      }
+
       const response = await fetch(`${this.baseUrl}/api/generate`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           model: this.model,
           system: systemPrompt,
