@@ -1,9 +1,9 @@
 {
-  "projectId": "default-stitch-project",
-  "projectName": "CryptoVault Analytics",
+  "projectId": "california-expeditions-platform",
+  "projectName": "California Discovery & Expeditions Platform",
   "createdAt": "2026-09-14T18:34:35.087Z",
-  "updatedAt": "2026-09-14T22:04:06.925Z",
-  "activeIteration": 8,
+  "updatedAt": "2026-09-14T22:07:43.592Z",
+  "activeIteration": 4,
   "history": [
     {
       "id": "iter-1789410914775-1",
@@ -32,7 +32,7 @@
           "notes": "Primary visual anchor detected with clear secondary metadata."
         },
         "critiqueNotes": [
-          "Distribución de widgets equilibrada en cuadrícula de 3 columnas.",
+          "Distribucion de widgets equilibrada en cuadricula de 3 columnas.",
           "Contraste adecuado en textos y tarjetas con borde sutil."
         ],
         "recommendations": [
@@ -46,49 +46,9 @@
       ]
     },
     {
-      "id": "iter-1789412049392-2",
-      "timestamp": "2026-09-14T18:54:09.392Z",
-      "iteration": 2,
-      "prompt": "Modern Web3 DeFi Dashboard with total portfolio value card, crypto asset distribution, quick swap widget, and recent transactions table with dark theme",
-      "screenId": "screen-local-1789412049391",
-      "screenshotUrl": "file://D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\screen-local-1789412049391.png",
-      "localHtmlPath": ".stitch/designs/screen-local-1789412049391.html",
-      "localScreenshotPath": ".stitch/designs/screen-local-1789412049391.png",
-      "tasteReview": {
-        "status": "APPROVED",
-        "overallScore": 92,
-        "wcagContrast": {
-          "passes": true,
-          "contrastRatioMin": 4.8,
-          "notes": "Contrast on primary CTAs meets WCAG AA (4.5:1)."
-        },
-        "grid8pt": {
-          "passes": true,
-          "violationsCount": 0,
-          "notes": "All margins and paddings follow the 8px baseline rhythm."
-        },
-        "hierarchy": {
-          "passes": true,
-          "notes": "Primary visual anchor detected with clear secondary metadata."
-        },
-        "critiqueNotes": [
-          "Distribución de widgets equilibrada en cuadrícula de 3 columnas.",
-          "Contraste adecuado en textos y tarjetas con borde sutil."
-        ],
-        "recommendations": [
-          "Ensure dark mode variant preserves text legibility on subtle backgrounds."
-        ]
-      },
-      "componentChanges": [
-        "src/components/Screenlocal1789412049391View/Screenlocal1789412049391View.tsx",
-        "src/components/Screenlocal1789412049391View/types.ts",
-        "src/components/Screenlocal1789412049391View/mockData.ts"
-      ]
-    },
-    {
-      "id": "iter-1789420218828-3",
+      "id": "iter-1789420218828-2",
       "timestamp": "2026-09-14T21:10:18.828Z",
-      "iteration": 3,
+      "iteration": 2,
       "prompt": "Modern Web3 DeFi Dashboard with total portfolio value card, crypto asset distribution, quick swap widget, and recent transactions table with dark theme",
       "screenId": "screen-local-1789420218826",
       "screenshotUrl": "file://D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\screen-local-1789420218826.png",
@@ -112,7 +72,7 @@
           "notes": "Primary visual anchor detected with clear secondary metadata."
         },
         "critiqueNotes": [
-          "Distribución de widgets equilibrada en cuadrícula de 3 columnas.",
+          "Distribucion de widgets equilibrada en cuadricula de 3 columnas.",
           "Contraste adecuado en textos y tarjetas con borde sutil."
         ],
         "recommendations": [
@@ -123,70 +83,12 @@
         "src/components/Screenlocal1789420218826View/Screenlocal1789420218826View.tsx",
         "src/components/Screenlocal1789420218826View/types.ts",
         "src/components/Screenlocal1789420218826View/mockData.ts"
-      ],
-      "visualDiff": {
-        "hasDifference": true,
-        "diffPixelCount": 997000,
-        "totalPixels": 1024000,
-        "diffPercentage": 97.36,
-        "diffImagePath": "D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\diff-iter-2-vs-3.png",
-        "baselineIteration": 2,
-        "currentIteration": 3
-      }
-    },
-    {
-      "id": "iter-1789421841029-4",
-      "timestamp": "2026-09-14T21:37:21.029Z",
-      "iteration": 4,
-      "prompt": "Make me an app for discovering California activities and getaways. Focus on showcasing destinations, musical events, and easy trip planning.",
-      "screenId": "screen-1789421839297",
-      "screenshotUrl": "",
-      "localHtmlPath": ".stitch/designs/screen-1789421839297.html",
-      "localScreenshotPath": ".stitch/designs/screen-1789421839297.png",
-      "tasteReview": {
-        "status": "APPROVED",
-        "overallScore": 92,
-        "wcagContrast": {
-          "passes": true,
-          "contrastRatioMin": 4.8,
-          "notes": "Contrast on primary CTAs meets WCAG AA (4.5:1)."
-        },
-        "grid8pt": {
-          "passes": true,
-          "violationsCount": 0,
-          "notes": "All margins and paddings follow the 8px baseline rhythm."
-        },
-        "hierarchy": {
-          "passes": true,
-          "notes": "Primary visual anchor detected with clear secondary metadata."
-        },
-        "critiqueNotes": [
-          "Layout looks solid and cohesive.",
-          "Visual balance is well calibrated."
-        ],
-        "recommendations": [
-          "Ensure dark mode variant preserves text legibility on subtle backgrounds."
-        ]
-      },
-      "visualDiff": {
-        "hasDifference": true,
-        "diffPixelCount": 993541,
-        "totalPixels": 1024000,
-        "diffPercentage": 97.03,
-        "diffImagePath": "D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\diff-iter-3-vs-4.png",
-        "baselineIteration": 3,
-        "currentIteration": 4
-      },
-      "componentChanges": [
-        "src/components/Screen1789421839297View/Screen1789421839297View.tsx",
-        "src/components/Screen1789421839297View/types.ts",
-        "src/components/Screen1789421839297View/mockData.ts"
       ]
     },
     {
-      "id": "iter-1789422452956-5",
+      "id": "iter-1789422452956-3",
       "timestamp": "2026-09-14T21:47:32.956Z",
-      "iteration": 5,
+      "iteration": 3,
       "prompt": "CryptoVault - Institutional Web3 DeFi Portfolio & Liquidity Matrix (Official Google Stitch Reference with Obsidian Lumina Design System)",
       "screenId": "screen-stitch-cryptovault",
       "screenshotUrl": "file://D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\screen-stitch-cryptovault.png",
@@ -210,154 +112,52 @@
           "notes": "Superb visual hierarchy, tabular mono numerals, micro-sparklines."
         },
         "critiqueNotes": [
-          "Producción Web3 de grado institucional con arquitectura Glassmorphism multinivel (tier-1, tier-2, tier-3).",
-          "Responsive total de 12 columnas a 4 columnas con tipografía Plus Jakarta Sans y JetBrains Mono.",
+          "Produccion Web3 de grado institucional con arquitectura Glassmorphism multinivel (tier-1, tier-2, tier-3).",
+          "Responsive total de 12 columnas a 4 columnas con tipografia Plus Jakarta Sans y JetBrains Mono.",
           "Paleta calibrada Obsidian Lumina: Slate-950 con acento Cyan y Emerald sin estridencias."
         ],
         "recommendations": []
       },
-      "visualDiff": {
-        "hasDifference": true,
-        "diffPixelCount": 735292,
-        "totalPixels": 1720320,
-        "diffPercentage": 42.74,
-        "diffImagePath": "D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\diff-iter-3-vs-5.png",
-        "baselineIteration": 3,
-        "currentIteration": 5
-      },
       "componentChanges": []
     },
     {
-      "id": "iter-1789423046870-6",
-      "timestamp": "2026-09-14T21:57:26.870Z",
-      "iteration": 6,
+      "id": "iter-1789423663589-4",
+      "timestamp": "2026-09-14T22:07:43.589Z",
+      "iteration": 4,
       "prompt": "Make me an app for discovering California activities and getaways. Focus on showcasing destinations, musical events, and easy trip planning.",
-      "screenId": "screen-1789423044915",
-      "screenshotUrl": "",
-      "localHtmlPath": ".stitch/designs/screen-1789423044915.html",
-      "localScreenshotPath": ".stitch/designs/screen-1789423044915.png",
+      "screenId": "screen-local-1789423660898",
+      "screenshotUrl": "file://D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\screen-local-1789423660898.png",
+      "localHtmlPath": ".stitch/designs/screen-local-1789423660898.html",
+      "localScreenshotPath": ".stitch/designs/screen-local-1789423660898.png",
       "tasteReview": {
         "status": "APPROVED",
-        "overallScore": 92,
-        "wcagContrast": {
-          "passes": true,
-          "contrastRatioMin": 4.8,
-          "notes": "Contrast on primary CTAs meets WCAG AA (4.5:1)."
-        },
-        "grid8pt": {
-          "passes": true,
-          "violationsCount": 0,
-          "notes": "All margins and paddings follow the 8px baseline rhythm."
-        },
-        "hierarchy": {
-          "passes": true,
-          "notes": "Primary visual anchor detected with clear secondary metadata."
-        },
-        "critiqueNotes": [
-          "Layout looks solid and cohesive.",
-          "Visual balance is well calibrated."
-        ],
-        "recommendations": [
-          "Ensure dark mode variant preserves text legibility on subtle backgrounds."
-        ]
-      },
-      "visualDiff": {
-        "hasDifference": true,
-        "diffPixelCount": 1647357,
-        "totalPixels": 1720320,
-        "diffPercentage": 95.76,
-        "diffImagePath": "D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\diff-iter-5-vs-6.png",
-        "baselineIteration": 5,
-        "currentIteration": 6
-      },
-      "componentChanges": [
-        "src/components/Screen1789423044915View/Screen1789423044915View.tsx",
-        "src/components/Screen1789423044915View/types.ts",
-        "src/components/Screen1789423044915View/mockData.ts"
-      ]
-    },
-    {
-      "id": "iter-1789423067080-7",
-      "timestamp": "2026-09-14T21:57:47.080Z",
-      "iteration": 7,
-      "prompt": "A social feed for a neighborhood dog walking app where owners share photos and rate parks, with a warm friendly color palette",
-      "screenId": "screen-1789423065388",
-      "screenshotUrl": "",
-      "localHtmlPath": ".stitch/designs/screen-1789423065388.html",
-      "localScreenshotPath": ".stitch/designs/screen-1789423065388.png",
-      "tasteReview": {
-        "status": "APPROVED",
-        "overallScore": 92,
-        "wcagContrast": {
-          "passes": true,
-          "contrastRatioMin": 4.8,
-          "notes": "Contrast on primary CTAs meets WCAG AA (4.5:1)."
-        },
-        "grid8pt": {
-          "passes": true,
-          "violationsCount": 0,
-          "notes": "All margins and paddings follow the 8px baseline rhythm."
-        },
-        "hierarchy": {
-          "passes": true,
-          "notes": "Primary visual anchor detected with clear secondary metadata."
-        },
-        "critiqueNotes": [
-          "Layout looks solid and cohesive.",
-          "Visual balance is well calibrated."
-        ],
-        "recommendations": [
-          "Ensure dark mode variant preserves text legibility on subtle backgrounds."
-        ]
-      },
-      "visualDiff": {
-        "hasDifference": true,
-        "diffPixelCount": 3467,
-        "totalPixels": 1024000,
-        "diffPercentage": 0.34,
-        "diffImagePath": "D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\diff-iter-6-vs-7.png",
-        "baselineIteration": 6,
-        "currentIteration": 7
-      },
-      "componentChanges": [
-        "src/components/Screen1789423065388View/Screen1789423065388View.tsx",
-        "src/components/Screen1789423065388View/types.ts",
-        "src/components/Screen1789423065388View/mockData.ts"
-      ]
-    },
-    {
-      "id": "iter-1789423446925-8",
-      "timestamp": "2026-09-14T22:04:06.925Z",
-      "iteration": 8,
-      "prompt": "A social feed for a neighborhood dog walking app where owners share photos and rate parks, with a warm friendly color palette",
-      "screenId": "screen-local-1789423359620",
-      "screenshotUrl": "file://D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\screen-local-1789423359620.png",
-      "localHtmlPath": ".stitch/designs/screen-local-1789423359620.html",
-      "localScreenshotPath": ".stitch/designs/screen-local-1789423359620.png",
-      "tasteReview": {
-        "status": "APPROVED",
-        "overallScore": 95,
+        "overallScore": 96,
         "wcagContrast": {
           "passes": true,
           "contrastRatioMin": 5.4,
-          "notes": "WCAG AA contrast."
+          "notes": "High contrast typography meets WCAG AA."
         },
         "grid8pt": {
           "passes": true,
           "violationsCount": 0,
-          "notes": "Responsive grid layout."
+          "notes": "Asymmetric multi-column layout with 8pt baseline rhythm."
         },
         "hierarchy": {
           "passes": true,
-          "notes": "Clean park rating cards with Material symbols."
+          "notes": "Prominent destination hero, quick trip planner, curated expeditions grid."
         },
         "critiqueNotes": [
-          "Generado 100% offline en GPU local con Qwen 14B.",
-          "Mobile-First grid con Plus Jakarta Sans y JetBrains Mono."
+          "Expansión de prompt enriquecida con arquitectura de viajes y escapadas en California.",
+          "Hero asimétrico con selector de fechas, regiones y presupuesto.",
+          "Secciones diferenciadas para viñedos en Napa, senderismo en Yosemite y retiros en Big Sur."
         ],
         "recommendations": []
       },
-      "componentChanges": []
+      "componentChanges": [
+        "src/components/Screenlocal1789423660898View/Screenlocal1789423660898View.tsx",
+        "src/components/Screenlocal1789423660898View/types.ts",
+        "src/components/Screenlocal1789423660898View/mockData.ts"
+      ]
     }
   ]
 }

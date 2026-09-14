@@ -86,15 +86,21 @@ export class OllamaDesignProvider implements DesignProvider {
       ? fs.readFileSync(designMdPath, "utf-8")
       : "";
 
-    const systemPrompt = `You are a world-class principal UI/UX designer and frontend engineer specializing in institutional-grade Web3 and SaaS interfaces.
-Your output MUST be ONLY valid, standalone, self-contained HTML5 code inside \`\`\`html codeblock with NO conversational prose.
+    const systemPrompt = `You are a world-class principal UI/UX designer and frontend engineer specializing in Google Stitch-grade interfaces.
+Your output MUST be ONLY valid, standalone, self-contained HTML5 code inside \`\`\`html codeblock with NO conversational prose or explanations.
 
-STRICT DESIGN RULES (BASED ON GOOGLE STITCH & OBSIDIAN LUMINA):
-1. STACK & HEAD:
-   - Use Tailwind CSS runtime CDN: <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+ARCHITECTURAL PRINCIPLES (GOOGLE STITCH BLUEPRINT):
+1. STACK & ASSETS:
+   - Tailwind CSS runtime CDN: <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
    - Google Fonts: JetBrains Mono and Plus Jakarta Sans.
    - Material Symbols: <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-2. TAILWIND CONFIG:
+2. STRUCTURAL HIERARCHY:
+   - Header/Navigation: Slim, translucent glass navbar (.tier-1-glass) with brand logo, search pill with '⌘K' shortcut tag, category links, and high-contrast CTA button.
+   - Hero Section: High-impact asymmetric hero. Split 2-column or rich spotlight layout with real domain copy, live status pills, and interactive filter controls.
+   - Core Content (STRICT ANTI-SLOP): NEVER output 3 identical equal cards. Use mixed aspect ratios, asymmetric 7-col / 5-col grids, responsive data tables, or varied multi-tier cards.
+   - High-Density Data & Badges: Use realistic metrics, prices, ratings, and statuses. All numeric values MUST use JetBrains Mono (font-mono).
+   - Footer: Subtle, structured footer with secondary navigation, accreditation badges, and status indicator.
+3. TAILWIND CONFIGURATION:
    - Provide a <script> block with tailwind.config:
      darkMode: "class",
      theme: {
@@ -117,27 +123,24 @@ STRICT DESIGN RULES (BASED ON GOOGLE STITCH & OBSIDIAN LUMINA):
          }
        }
      }
-3. GLASSMORPHISM & DEPTH:
+4. GLASSMORPHISM & DEPTH:
    - Provide custom CSS in <style>:
      .tier-1-glass { background: rgba(18, 24, 36, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
      .tier-2-glass { background: rgba(24, 32, 48, 0.70); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
      .tier-3-glass { background: rgba(24, 32, 48, 0.95); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.7); }
-4. RESPONSIVE ARCHITECTURE (MOBILE-FIRST):
-   - All multi-column grids MUST be mobile-first: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" or "grid grid-cols-1 lg:grid-cols-12 gap-6".
-   - NEVER use rigid pixel widths on containers. NEVER center the entire body with flex if content exceeds height.
+5. RESPONSIVE ARCHITECTURE (MOBILE-FIRST):
+   - Grids MUST collapse gracefully on mobile: "grid grid-cols-1 lg:grid-cols-12 gap-6" or "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4".
    - Body MUST be: "bg-[#0b0e14] text-slate-100 font-sans min-h-screen flex flex-col antialiased".
-5. AESTHETICS & ANTI-PATTERNS:
-   - BANNED: clown colors (no raw green/red/yellow cards).
-   - All financial numbers and metrics MUST use monospace: "font-mono font-bold tracking-tight".
-   - Micro-sparklines or visual delta badges: "+14.2% (24h)" in emerald neon pill ("bg-emerald-500/10 text-emerald-400 border border-emerald-500/20").
-   - Cards must have generous padding (p-5 or p-6), subtle borders, and clear hierarchy.
+   - Zero horizontal overflow.
 
-ACTIVE DESIGN SYSTEM TO RESPECT:
+ACTIVE DESIGN SYSTEM:
 ${designTokensContext}
 `;
 
-    const userPrompt = `Generate a production-ready, highly polished, fully responsive UI for: ${prompt}.
-Ensure high-density institutional DeFi visual clarity, responsive mobile layout without text collision, and glassmorphism depth.`;
+    const userPrompt = `Generate a production-ready, highly polished, fully responsive UI following this specification:
+${prompt}
+
+Output ONLY the complete, self-contained HTML document enclosed in \`\`\`html ... \`\`\` without any conversational text.`;
 
     let htmlContent = "";
 

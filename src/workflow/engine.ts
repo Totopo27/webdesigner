@@ -14,6 +14,7 @@ import { ComponentValidator } from "../ast/validator.js";
 import { StitchDesignProvider } from "../mcp/stitch-client.js";
 import { OllamaDesignProvider } from "../providers/ollama-provider.js";
 import { VisualDiffer } from "../visual/differ.js";
+import { StitchPromptEnhancer } from "../prompt/enhancer.js";
 
 export interface SddDesignConfig {
   baseDir?: string;
@@ -132,9 +133,21 @@ export class SddDesignEngine {
    */
   public async generateScreen(
     prompt: string,
-    options: { deviceType?: "DESKTOP" | "MOBILE" | "TABLET"; skipDiff?: boolean } = {}
+    options: { deviceType?: "DESKTOP" | "MOBILE" | "TABLET"; skipDiff?: boolean; enhance?: boolean } = {}
   ): Promise<{ artifact: ScreenArtifact; iterationNumber: number; visualDiff?: VisualDiffResult }> {
-    const artifact = await this.provider.generateScreen(this.currentProjectId, prompt, options);
+    const shouldEnhance = options.enhance !== false;
+    const enhanced = shouldEnhance
+      ? StitchPromptEnhancer.enhance(prompt)
+      : { enhancedPrompt: prompt, title: prompt.slice(0, 40) };
+
+    const effectivePrompt = enhanced.enhancedPrompt;
+
+    if (enhanced.title) {
+      this.trajectory.setProjectName(enhanced.title);
+    }
+
+    const artifact = await this.provider.generateScreen(this.currentProjectId, effectivePrompt, options);
+    artifact.title = enhanced.title;
 
     const safeId = artifact.screenId.replace(/[^a-zA-Z0-9_-]/g, "_");
     const localHtml = `.stitch/designs/${safeId}.html`;
@@ -188,6 +201,7 @@ export class SddDesignEngine {
 
     const entry = this.trajectory.recordIteration({
       prompt,
+      title: enhanced.title,
       screenId: artifact.screenId,
       screenshotUrl: artifact.screenshotUrl,
       localHtmlPath: localHtml,

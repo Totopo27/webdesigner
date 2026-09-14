@@ -25,7 +25,7 @@ export default function sddDesignExtension(pi: any): void {
   // 1. Session start: register status indicator
   pi.on?.("session_start", async (_event: any, ctx: any) => {
     if (ctx?.hasUI && typeof ctx?.ui?.setStatus === "function") {
-      ctx.ui.setStatus("sdd-design", "🎨 Design SDD");
+      ctx.ui.setStatus("sdd-design", "Design SDD");
     }
   });
 
@@ -38,7 +38,7 @@ export default function sddDesignExtension(pi: any): void {
       const system = engine.initDesignSystem(systemName);
 
       const msg = [
-        `✨ **Design System Initialized: ${system.name}**`,
+        `[OK] **Design System Initialized: ${system.name}**`,
         `- **Location:** \`.stitch/DESIGN.md\``,
         `- **Primary Color:** \`${system.colors.primary}\``,
         `- **Typography:** \`${system.typography.fontFamilies.sans}\``,
@@ -58,19 +58,19 @@ export default function sddDesignExtension(pi: any): void {
     handler: async (args: string[], ctx: any) => {
       const prompt = args.join(" ").trim();
       if (!prompt) {
-        const help = "⚠️ Please specify a prompt. Example: `/design:generate Modern dashboard for cloud monitoring with dark mode`";
+        const help = "[WARN] Please specify a prompt. Example: `/design:generate Modern dashboard for cloud monitoring with dark mode`";
         if (ctx?.ui?.notify) ctx.ui.notify(help);
         else console.log(help);
         return;
       }
 
       const engine = getEngine(ctx);
-      if (ctx?.ui?.notify) ctx.ui.notify("🎨 Calling Stitch MCP to generate screen...");
+      if (ctx?.ui?.notify) ctx.ui.notify("[INFO] Generating screen with Stitch architecture...");
 
       try {
         const { artifact, iterationNumber } = await engine.generateScreen(prompt);
         const msg = [
-          `✅ **Screen Generated! (Iteration #${iterationNumber})**`,
+          `[OK] **Screen Generated (Iteration #${iterationNumber})**`,
           `- **Screen ID:** \`${artifact.screenId}\``,
           `- **HTML:** \`.stitch/designs/${artifact.screenId.replace(/[^a-zA-Z0-9_-]/g, "_")}.html\``,
           `- **Screenshot:** \`.stitch/designs/${artifact.screenId.replace(/[^a-zA-Z0-9_-]/g, "_")}.png\``,
@@ -81,7 +81,7 @@ export default function sddDesignExtension(pi: any): void {
         if (ctx?.ui?.notify) ctx.ui.notify(msg);
         else console.log(msg);
       } catch (err: any) {
-        const errMsg = `❌ Error generating screen: ${err.message}`;
+        const errMsg = `[ERROR] Error generating screen: ${err.message}`;
         if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
         else console.error(errMsg);
       }
@@ -96,8 +96,8 @@ export default function sddDesignExtension(pi: any): void {
       try {
         const verdict = engine.judgeActiveIteration();
         const msg = [
-          `⚖️ **Judgment Day: Visual & Taste Review**`,
-          `- **Verdict:** ${verdict.status === "APPROVED" ? "✅ APPROVED" : "⚠️ NEEDS REVISION"} (${verdict.overallScore}/100)`,
+          `[AUDIT] **Judgment Day: Visual & Taste Review**`,
+          `- **Verdict:** ${verdict.status === "APPROVED" ? "[PASSED] APPROVED" : "[WARN] NEEDS REVISION"} (${verdict.overallScore}/100)`,
           `- **WCAG AA Contrast:** ${verdict.wcagContrast.passes ? "PASSED" : "FAILED"} (${verdict.wcagContrast.notes})`,
           `- **8pt Grid Baseline:** ${verdict.grid8pt.passes ? "PASSED" : "FAILED"} (${verdict.grid8pt.violationsCount} violations)`,
           `- **Visual Hierarchy:** ${verdict.hierarchy.passes ? "PASSED" : "FAILED"}`,
@@ -110,7 +110,7 @@ export default function sddDesignExtension(pi: any): void {
         if (ctx?.ui?.notify) ctx.ui.notify(msg);
         else console.log(msg);
       } catch (err: any) {
-        const errMsg = `⚠️ Review check: ${err.message}`;
+        const errMsg = `[WARN] Review check: ${err.message}`;
         if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
         else console.error(errMsg);
       }
@@ -126,7 +126,7 @@ export default function sddDesignExtension(pi: any): void {
         const result = engine.componentizeActiveScreen();
         const fileList = result.files.map((f) => `  - \`${f.relativePath}\` (${f.type})`).join("\n");
         const msg = [
-          `🚀 **Componentization Complete!**`,
+          `[OK] **Componentization Complete**`,
           result.summary,
           "",
           `**Generated Files:**`,
@@ -138,7 +138,7 @@ export default function sddDesignExtension(pi: any): void {
         if (ctx?.ui?.notify) ctx.ui.notify(msg);
         else console.log(msg);
       } catch (err: any) {
-        const errMsg = `❌ Error in componentization: ${err.message}`;
+        const errMsg = `[ERROR] Error in componentization: ${err.message}`;
         if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
         else console.error(errMsg);
       }
@@ -164,7 +164,7 @@ export default function sddDesignExtension(pi: any): void {
       try {
         const history = engine.trajectory.getTrajectory().history;
         if (history.length < 2) {
-          const warn = "⚠️ At least two design iterations are required to compute a visual diff.";
+          const warn = "[WARN] At least two design iterations are required to compute a visual diff.";
           if (ctx?.ui?.notify) ctx.ui.notify(warn);
           else console.log(warn);
           return;
@@ -181,22 +181,22 @@ export default function sddDesignExtension(pi: any): void {
         }
 
         const diffResult = engine.diffIterations(iterA, iterB);
-        const icon = diffResult.hasDifference ? "📊" : "🎯";
+        const statusTag = diffResult.hasDifference ? "[DIFF]" : "[MATCH]";
         const msg = [
-          `🎨 **Visual Regression Diff: Iteration #${iterA} ➔ #${iterB}**`,
-          `- **Status:** ${icon} ${diffResult.diffPercentage}% pixel shift`,
+          `[DIFF] **Visual Regression Diff: Iteration #${iterA} -> #${iterB}**`,
+          `- **Status:** ${statusTag} ${diffResult.diffPercentage}% pixel shift`,
           `- **Changed Pixels:** ${diffResult.diffPixelCount.toLocaleString()} / ${diffResult.totalPixels.toLocaleString()}`,
           `- **Diff Artifact:** \`${diffResult.diffImagePath}\``,
           "",
           diffResult.hasDifference
             ? `*Visual differences are highlighted in neon magenta on \`${diffResult.diffImagePath}\`.*`
-            : `*Both iterations are pixel-identical!*`,
+            : `*Both iterations are pixel-identical.*`,
         ].join("\n");
 
         if (ctx?.ui?.notify) ctx.ui.notify(msg);
         else console.log(msg);
       } catch (err: any) {
-        const errMsg = `❌ Error computing visual diff: ${err.message}`;
+        const errMsg = `[ERROR] Error computing visual diff: ${err.message}`;
         if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
         else console.error(errMsg);
       }
@@ -211,7 +211,7 @@ export default function sddDesignExtension(pi: any): void {
       try {
         const paths = engine.exportThemeFiles();
         const msg = [
-          `🎨 **Design System Tokens Exported!**`,
+          `[OK] **Design System Tokens Exported**`,
           `- **Tailwind v4 (@theme):** \`${path.relative(process.cwd(), paths.v4ThemePath)}\``,
           `- **CSS Variables (:root):** \`${path.relative(process.cwd(), paths.cssVariablesPath)}\``,
           `- **Tailwind v3 Config:** \`${path.relative(process.cwd(), paths.v3ConfigPath)}\``,
@@ -222,7 +222,7 @@ export default function sddDesignExtension(pi: any): void {
         if (ctx?.ui?.notify) ctx.ui.notify(msg);
         else console.log(msg);
       } catch (err: any) {
-        const errMsg = `❌ Error exporting theme files: ${err.message}`;
+        const errMsg = `[ERROR] Error exporting theme files: ${err.message}`;
         if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
         else console.error(errMsg);
       }
@@ -238,17 +238,17 @@ export default function sddDesignExtension(pi: any): void {
       try {
         startStudioServer(port, "0.0.0.0", cwd);
         const msg = [
-          `🎨 **pi-sdd-design Studio Launched!**`,
+          `[OK] **Stitch Studio Launched**`,
           `- **Local PC:** [\`http://localhost:${port}\`](http://localhost:${port})`,
           `- **Mobile (LAN):** \`http://192.168.100.11:${port}\``,
           "",
-          `Open in your browser to inspect visual diffs, device viewports, and generate screens interactively!`,
+          `Open in your browser to inspect visual diffs, device viewports, and generate screens interactively.`,
         ].join("\n");
 
         if (ctx?.ui?.notify) ctx.ui.notify(msg);
         else console.log(msg);
       } catch (err: any) {
-        const errMsg = `❌ Error starting Design Studio: ${err.message}`;
+        const errMsg = `[ERROR] Error starting Design Studio: ${err.message}`;
         if (ctx?.ui?.notify) ctx.ui.notify(errMsg);
         else console.error(errMsg);
       }

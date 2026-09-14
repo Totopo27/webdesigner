@@ -51,8 +51,14 @@ export class TrajectoryManager {
     return this.trajectory;
   }
 
+  public setProjectName(name: string): void {
+    this.trajectory.projectName = name;
+    this.save(this.trajectory);
+  }
+
   public recordIteration(params: {
     prompt: string;
+    title?: string;
     screenId: string;
     screenshotUrl: string;
     localHtmlPath: string;
@@ -67,6 +73,7 @@ export class TrajectoryManager {
       timestamp: new Date().toISOString(),
       iteration: nextIteration,
       prompt: params.prompt,
+      title: params.title,
       screenId: params.screenId,
       screenshotUrl: params.screenshotUrl,
       localHtmlPath: params.localHtmlPath,
@@ -138,10 +145,10 @@ export class TrajectoryManager {
       if (entry.tasteReview) {
         const badge =
           entry.tasteReview.status === "APPROVED"
-            ? "✅ APPROVED"
+            ? "[PASSED] APPROVED"
             : entry.tasteReview.status === "REJECTED"
-            ? "❌ REJECTED"
-            : "⚠️ NEEDS REVISION";
+            ? "[REJECTED]"
+            : "[NEEDS REVISION]";
         lines.push(`- **Taste Review:** ${badge} (Score: ${entry.tasteReview.overallScore}/100)`);
         lines.push(`  - Contrast: ${entry.tasteReview.wcagContrast.passes ? "Pass" : "Fail"} (${entry.tasteReview.wcagContrast.notes})`);
         lines.push(`  - 8pt Grid: ${entry.tasteReview.grid8pt.passes ? "Pass" : "Fail"} (${entry.tasteReview.grid8pt.violationsCount} violations)`);
@@ -151,9 +158,9 @@ export class TrajectoryManager {
       }
 
       if (entry.visualDiff) {
-        const diffIcon = entry.visualDiff.hasDifference ? "📊" : "🎯";
+        const diffStatus = entry.visualDiff.hasDifference ? "[DIFF]" : "[MATCH]";
         lines.push(
-          `- **Visual Regression (vs #${entry.visualDiff.baselineIteration}):** ${diffIcon} ${entry.visualDiff.diffPercentage}% pixel shift (${entry.visualDiff.diffPixelCount.toLocaleString()} changed pixels)`
+          `- **Visual Regression (vs #${entry.visualDiff.baselineIteration}):** ${diffStatus} ${entry.visualDiff.diffPercentage}% pixel shift (${entry.visualDiff.diffPixelCount.toLocaleString()} changed pixels)`
         );
         lines.push(`  - Diff Artifact: \`${entry.visualDiff.diffImagePath}\``);
       }

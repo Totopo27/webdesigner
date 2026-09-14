@@ -3,11 +3,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        "primary": "#2563eb",
-        "secondary": "#64748b",
-        "background": "#ffffff",
-        "foreground": "#0f172a",
-        "muted": "#f1f5f9"
+        "custom-1": "#0b0e14"
 },
       fontFamily: {
         "sans": "Inter, system-ui, sans-serif"

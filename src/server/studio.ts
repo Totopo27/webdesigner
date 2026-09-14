@@ -110,13 +110,13 @@ export class StudioServer {
     });
 
     this.server.listen(this.port, this.host, () => {
-      console.log("=================================================");
-      console.log("🎨 PI-SDD-DESIGN STUDIO ACTIVO");
-      console.log("=================================================");
-      console.log(`💻 Desde esta PC:     http://localhost:${this.port}`);
-      console.log(`📱 Desde tu Android:  http://192.168.100.11:${this.port}`);
-      console.log(`🌐 Interfaz:          ${this.host}:${this.port}`);
-      console.log("=================================================");
+      console.log("-------------------------------------------------");
+      console.log("STITCH STUDIO // LOCAL ENGINE ACTIVE");
+      console.log("-------------------------------------------------");
+      console.log(`[LOCAL]  http://localhost:${this.port}`);
+      console.log(`[LAN]    http://192.168.100.11:${this.port}`);
+      console.log(`[HOST]   ${this.host}:${this.port}`);
+      console.log("-------------------------------------------------");
     });
 
     return this.server;
@@ -147,13 +147,14 @@ export class StudioServer {
     const themeV4Content = fs.existsSync(themeV4Path) ? fs.readFileSync(themeV4Path, "utf-8") : "/* Run /design:export */";
 
     const isStitchReference = activeIter?.iteration === 5 || activeIter?.prompt.includes("Google Stitch");
+    const displayProjectName = activeIter?.title || trajectory.projectName || "Interface Design";
 
     return `<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>pi-sdd-design Studio</title>
+  <title>Stitch Studio // Local Engine</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -185,10 +186,12 @@ export class StudioServer {
 <body class="min-h-screen flex flex-col">
   <header class="h-16 border-b border-border bg-surface/80 backdrop-blur px-6 flex items-center justify-between sticky top-0 z-50">
     <div class="flex items-center gap-3">
-      <span class="text-2xl">🎨</span>
+      <div class="w-8 h-8 rounded-lg bg-surfaceCard border border-border flex items-center justify-center font-mono font-bold text-primary text-xs">
+        ST
+      </div>
       <div>
         <h1 class="font-bold text-base text-white tracking-tight flex items-center gap-2">
-          pi-sdd-design Studio
+          Stitch Studio // Local Engine
           <span class="text-xs ${
             isStitchReference
               ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
@@ -197,7 +200,7 @@ export class StudioServer {
             ${isStitchReference ? "Google Stitch Cloud (Gemini 3.8 Flash)" : "Ollama Local GPU"}
           </span>
         </h1>
-        <p class="text-xs text-slate-400">${trajectory.projectName} • ${history.length} iterations</p>
+        <p class="text-xs text-slate-400">${displayProjectName} &bull; ${history.length} iterations</p>
       </div>
     </div>
 
@@ -207,8 +210,8 @@ export class StudioServer {
       <button onclick="setViewport('mobile')" id="btn-mobile" class="px-3 py-1 text-xs font-semibold rounded text-slate-300 hover:text-white transition">Mobile</button>
     </div>
 
-    <div class="hidden sm:flex items-center gap-2 text-xs text-slate-400">
-      <span>📱 LAN:</span>
+    <div class="hidden sm:flex items-center gap-2 text-xs text-slate-400 font-mono">
+      <span>LAN:</span>
       <code class="bg-surfaceCard px-2 py-1 rounded text-primary border border-border">http://192.168.100.11:${this.port}</code>
     </div>
   </header>
@@ -223,7 +226,7 @@ export class StudioServer {
                 ? 'bg-primary/20 text-primary border-primary/40 shadow-sm font-bold'
                 : 'bg-surface text-slate-400 border-border hover:text-white hover:border-slate-600'
             }">
-              #${entry.iteration} ${entry.iteration === (activeIter?.iteration ?? 0) ? '★' : ''} ${entry.iteration === 5 ? '(Stitch)' : ''}
+              #${entry.iteration} ${entry.iteration === (activeIter?.iteration ?? 0) ? '[active]' : ''} ${entry.iteration === 5 ? '(Stitch Reference)' : ''}
             </a>
           `).join("")}
         </div>
@@ -385,7 +388,7 @@ export class StudioServer {
       const prompt = input.value.trim();
       if (!prompt) return;
 
-      status.innerText = '⚡ Generating on GPU...';
+      status.innerText = "Generating architecture...";
       status.className = 'text-primary animate-pulse font-medium';
       btn.disabled = true;
       btn.classList.add('opacity-50');

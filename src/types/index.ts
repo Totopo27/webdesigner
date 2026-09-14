@@ -130,6 +130,7 @@ export interface DesignTrajectoryEntry {
   timestamp: string;
   iteration: number;
   prompt: string;
+  title?: string;
   screenId: string;
   screenshotUrl: string;
   localHtmlPath: string;
