@@ -28,24 +28,28 @@ export class StudioServer {
     const designsDir = path.join(this.baseDir, ".stitch", "designs");
 
     this.server = http.createServer(async (req, res) => {
-      const url = req.url || "/";
+      const fullUrl = req.url || "/";
+      const host = req.headers.host || "localhost";
+      const parsedUrl = new URL(fullUrl, `http://${host}`);
+      const pathname = parsedUrl.pathname;
 
       // 1. Studio Web App UI
-      if (url === "/" || url === "/index.html") {
+      if (pathname === "/" || pathname === "/index.html") {
+        const iterParam = parseInt(parsedUrl.searchParams.get("iter") || "0", 10);
         res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-        res.end(this.renderHtml());
+        res.end(this.renderHtml(iterParam));
         return;
       }
 
       // 2. Trajectory JSON API
-      if (url === "/api/trajectory") {
+      if (pathname === "/api/trajectory") {
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(this.engine.trajectory.getTrajectory(), null, 2));
         return;
       }
 
       // 3. Tokens & Theme API
-      if (url === "/api/tokens") {
+      if (pathname === "/api/tokens") {
         const tokens = this.engine.initDesignSystem();
         const v4 = TokenParser.generateTailwindV4Theme(tokens);
         const css = TokenParser.generateCssVariables(tokens);
@@ -55,7 +59,7 @@ export class StudioServer {
       }
 
       // 4. In-Browser Prompt Generation (POST /api/generate)
-      if (url === "/api/generate" && req.method === "POST") {
+      if (pathname === "/api/generate" && req.method === "POST") {
         let body = "";
         req.on("data", (chunk) => { body += chunk; });
         req.on("end", async () => {
@@ -84,8 +88,8 @@ export class StudioServer {
       }
 
       // 5. Static Design Artifacts (/designs/:filename)
-      if (url.startsWith("/designs/")) {
-        const filename = path.basename(url);
+      if (pathname.startsWith("/designs/")) {
+        const filename = path.basename(pathname);
         const filePath = path.join(designsDir, filename);
 
         if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
@@ -125,10 +129,13 @@ export class StudioServer {
     }
   }
 
-  private renderHtml(): string {
+  private renderHtml(selectedIter?: number): string {
     const trajectory = this.engine.trajectory.getTrajectory();
-    const activeIter = this.engine.trajectory.getActiveIteration();
     const history = trajectory.history;
+    const activeIter =
+      (selectedIter ? history.find((e) => e.iteration === selectedIter) : null) ||
+      this.engine.trajectory.getActiveIteration() ||
+      history[history.length - 1];
 
     let activeScreenHtmlUrl = "";
     if (activeIter) {
@@ -138,6 +145,8 @@ export class StudioServer {
 
     const themeV4Path = path.join(this.baseDir, ".stitch", "theme-v4.css");
     const themeV4Content = fs.existsSync(themeV4Path) ? fs.readFileSync(themeV4Path, "utf-8") : "/* Run /design:export */";
+
+    const isStitchReference = activeIter?.iteration === 5 || activeIter?.prompt.includes("Google Stitch");
 
     return `<!DOCTYPE html>
 <html lang="en" class="dark">
@@ -180,7 +189,13 @@ export class StudioServer {
       <div>
         <h1 class="font-bold text-base text-white tracking-tight flex items-center gap-2">
           pi-sdd-design Studio
-          <span class="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full border border-primary/30">Ollama Local GPU</span>
+          <span class="text-xs ${
+            isStitchReference
+              ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+              : "bg-primary/20 text-primary border-primary/30"
+          } px-2 py-0.5 rounded-full border">
+            ${isStitchReference ? "Google Stitch Cloud (Gemini 3.8 Flash)" : "Ollama Local GPU"}
+          </span>
         </h1>
         <p class="text-xs text-slate-400">${trajectory.projectName} • ${history.length} iterations</p>
       </div>
@@ -203,13 +218,13 @@ export class StudioServer {
       <div class="w-full max-w-5xl mb-4 flex items-center justify-between">
         <div class="flex items-center gap-2 overflow-x-auto pb-1">
           ${history.map((entry) => `
-            <button class="px-3 py-1.5 text-xs font-medium rounded-md border ${
+            <a href="/?iter=${entry.iteration}" class="px-3 py-1.5 text-xs font-medium rounded-md border transition ${
               entry.iteration === (activeIter?.iteration ?? 0)
-                ? 'bg-primary/20 text-primary border-primary/40 shadow-sm'
-                : 'bg-surface text-slate-400 border-border hover:text-white'
+                ? 'bg-primary/20 text-primary border-primary/40 shadow-sm font-bold'
+                : 'bg-surface text-slate-400 border-border hover:text-white hover:border-slate-600'
             }">
-              #${entry.iteration} ${entry.iteration === (activeIter?.iteration ?? 0) ? '★' : ''}
-            </button>
+              #${entry.iteration} ${entry.iteration === (activeIter?.iteration ?? 0) ? '★' : ''} ${entry.iteration === 5 ? '(Stitch)' : ''}
+            </a>
           `).join("")}
         </div>
 

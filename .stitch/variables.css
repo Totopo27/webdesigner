@@ -1,13 +1,9 @@
-/* Design System Variables: CryptoVault Modern Design System */
+/* Design System Variables: Stitch Design */
 :root {
-  --primary: #3b82f6;
+  --primary: #2563eb;
   --secondary: #64748b;
-  --accent: #f59e0b;
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --card: #1e293b;
-  --muted: #334155;
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --muted: #f1f5f9;
   --font-sans: Inter, system-ui, sans-serif;
-  --font-heading: Plus Jakarta Sans, sans-serif;
-  --radius: 0.25rem;
 }

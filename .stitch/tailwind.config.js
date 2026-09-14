@@ -3,24 +3,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        "primary": "#3b82f6",
+        "primary": "#2563eb",
         "secondary": "#64748b",
-        "accent": "#f59e0b",
-        "background": "#0f172a",
-        "foreground": "#f8fafc",
-        "card": "#1e293b",
-        "muted": "#334155"
+        "background": "#ffffff",
+        "foreground": "#0f172a",
+        "muted": "#f1f5f9"
 },
       fontFamily: {
-        "sans": "Inter, system-ui, sans-serif",
-        "heading": "Plus Jakarta Sans, sans-serif"
+        "sans": "Inter, system-ui, sans-serif"
 },
-      borderRadius: {
-        "sm": "0.25rem",
-        "DEFAULT": "0.5rem",
-        "lg": "0.75rem",
-        "full": "9999px"
-},
+      borderRadius: {},
     },
   },
 };

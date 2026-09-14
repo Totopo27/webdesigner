@@ -81,12 +81,63 @@ export class OllamaDesignProvider implements DesignProvider {
     prompt: string,
     _options: { deviceType?: "DESKTOP" | "MOBILE" | "TABLET" } = {}
   ): Promise<ScreenArtifact> {
-    const systemPrompt = `You are an expert UI/UX frontend designer. Output ONLY valid, standalone, self-contained HTML5 with Tailwind CSS via CDN script.
-Include a <script> block defining tailwind.config with custom color tokens matching the design intent.
-Do NOT wrap your code in explanations; output strictly the HTML markup inside \`\`\`html codeblock.`;
+    const designMdPath = path.join(this.baseDir, ".stitch", "DESIGN.md");
+    const designTokensContext = fs.existsSync(designMdPath)
+      ? fs.readFileSync(designMdPath, "utf-8")
+      : "";
 
-    const userPrompt = `Create a modern, high-fidelity UI layout for: ${prompt}.
-Ensure semantic HTML, accessible color contrasts, and clean visual hierarchy.`;
+    const systemPrompt = `You are a world-class principal UI/UX designer and frontend engineer specializing in institutional-grade Web3 and SaaS interfaces.
+Your output MUST be ONLY valid, standalone, self-contained HTML5 code inside \`\`\`html codeblock with NO conversational prose.
+
+STRICT DESIGN RULES (BASED ON GOOGLE STITCH & OBSIDIAN LUMINA):
+1. STACK & HEAD:
+   - Use Tailwind CSS runtime CDN: <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+   - Google Fonts: JetBrains Mono and Plus Jakarta Sans.
+   - Material Symbols: <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+2. TAILWIND CONFIG:
+   - Provide a <script> block with tailwind.config:
+     darkMode: "class",
+     theme: {
+       extend: {
+         colors: {
+           background: "#0b0e14",
+           surface: "#10131a",
+           "surface-low": "#191c22",
+           "surface-card": "#1d2026",
+           "surface-high": "#272a31",
+           primary: "#00f2fe",
+           secondary: "#10b981",
+           tertiary: "#8b5cf6",
+           danger: "#f43f5e",
+           warning: "#f59e0b"
+         },
+         fontFamily: {
+           sans: ["Plus Jakarta Sans", "sans-serif"],
+           mono: ["JetBrains Mono", "monospace"]
+         }
+       }
+     }
+3. GLASSMORPHISM & DEPTH:
+   - Provide custom CSS in <style>:
+     .tier-1-glass { background: rgba(18, 24, 36, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+     .tier-2-glass { background: rgba(24, 32, 48, 0.70); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+     .tier-3-glass { background: rgba(24, 32, 48, 0.95); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.7); }
+4. RESPONSIVE ARCHITECTURE (MOBILE-FIRST):
+   - All multi-column grids MUST be mobile-first: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" or "grid grid-cols-1 lg:grid-cols-12 gap-6".
+   - NEVER use rigid pixel widths on containers. NEVER center the entire body with flex if content exceeds height.
+   - Body MUST be: "bg-[#0b0e14] text-slate-100 font-sans min-h-screen flex flex-col antialiased".
+5. AESTHETICS & ANTI-PATTERNS:
+   - BANNED: clown colors (no raw green/red/yellow cards).
+   - All financial numbers and metrics MUST use monospace: "font-mono font-bold tracking-tight".
+   - Micro-sparklines or visual delta badges: "+14.2% (24h)" in emerald neon pill ("bg-emerald-500/10 text-emerald-400 border border-emerald-500/20").
+   - Cards must have generous padding (p-5 or p-6), subtle borders, and clear hierarchy.
+
+ACTIVE DESIGN SYSTEM TO RESPECT:
+${designTokensContext}
+`;
+
+    const userPrompt = `Generate a production-ready, highly polished, fully responsive UI for: ${prompt}.
+Ensure high-density institutional DeFi visual clarity, responsive mobile layout without text collision, and glassmorphism depth.`;
 
     let htmlContent = "";
 
@@ -119,30 +170,79 @@ Ensure semantic HTML, accessible color contrasts, and clean visual hierarchy.`;
 
     if (!htmlContent || !htmlContent.includes("<html")) {
       htmlContent = `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${prompt}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script>
     tailwind.config = {
+      darkMode: "class",
       theme: {
         extend: {
           colors: {
-            primary: '#3b82f6',
-            secondary: '#64748b',
-            background: '#09090b',
-            foreground: '#f8fafc'
+            background: "#0b0e14",
+            surface: "#10131a",
+            "surface-low": "#191c22",
+            "surface-card": "#1d2026",
+            primary: "#00f2fe",
+            secondary: "#10b981",
+            tertiary: "#8b5cf6"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
           }
         }
       }
     }
   </script>
+  <style>
+    .tier-2-glass {
+      background: rgba(24, 32, 48, 0.70);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
 </head>
-<body class="bg-background text-foreground min-h-screen p-8">
-  <div class="max-w-6xl mx-auto">
-    <h1 class="text-3xl font-bold mb-4">${prompt}</h1>
-    <p class="text-secondary mb-8">Generated locally via Ollama (${this.model}).</p>
+<body class="bg-[#0b0e14] text-slate-100 font-sans min-h-screen p-4 sm:p-8 antialiased">
+  <div class="max-w-6xl mx-auto space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-wider text-primary">Web3 DeFi Dashboard // Active</span>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">${prompt}</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+        <span class="text-xs font-mono text-secondary">Mainnet Synced</span>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="tier-2-glass rounded-xl p-5">
+        <div class="text-xs text-slate-400 font-medium uppercase">Total Value Locked</div>
+        <div class="text-2xl font-mono font-bold text-white mt-2">$482,910.42</div>
+        <div class="text-xs font-mono text-secondary mt-1">+8.4% (24h)</div>
+      </div>
+      <div class="tier-2-glass rounded-xl p-5">
+        <div class="text-xs text-slate-400 font-medium uppercase">24h Yield Gain</div>
+        <div class="text-2xl font-mono font-bold text-primary mt-2">+$1,294.80</div>
+        <div class="text-xs font-mono text-slate-400 mt-1">APY 14.2%</div>
+      </div>
+      <div class="tier-2-glass rounded-xl p-5">
+        <div class="text-xs text-slate-400 font-medium uppercase">Health Factor</div>
+        <div class="text-2xl font-mono font-bold text-secondary mt-2">1.92</div>
+        <div class="text-xs font-mono text-secondary mt-1">STABLE</div>
+      </div>
+      <div class="tier-2-glass rounded-xl p-5">
+        <div class="text-xs text-slate-400 font-medium uppercase">Claimable</div>
+        <div class="text-2xl font-mono font-bold text-tertiary mt-2">$1,840.10</div>
+        <div class="text-xs font-mono text-slate-400 mt-1">342.5 VAULT</div>
+      </div>
+    </div>
   </div>
 </body>
 </html>`;

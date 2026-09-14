@@ -2,8 +2,8 @@
   "projectId": "default-stitch-project",
   "projectName": "CryptoVault Analytics",
   "createdAt": "2026-09-14T18:34:35.087Z",
-  "updatedAt": "2026-09-14T21:11:55.012Z",
-  "activeIteration": 3,
+  "updatedAt": "2026-09-14T21:47:32.956Z",
+  "activeIteration": 5,
   "history": [
     {
       "id": "iter-1789410914775-1",
@@ -133,6 +133,99 @@
         "baselineIteration": 2,
         "currentIteration": 3
       }
+    },
+    {
+      "id": "iter-1789421841029-4",
+      "timestamp": "2026-09-14T21:37:21.029Z",
+      "iteration": 4,
+      "prompt": "Make me an app for discovering California activities and getaways. Focus on showcasing destinations, musical events, and easy trip planning.",
+      "screenId": "screen-1789421839297",
+      "screenshotUrl": "",
+      "localHtmlPath": ".stitch/designs/screen-1789421839297.html",
+      "localScreenshotPath": ".stitch/designs/screen-1789421839297.png",
+      "tasteReview": {
+        "status": "APPROVED",
+        "overallScore": 92,
+        "wcagContrast": {
+          "passes": true,
+          "contrastRatioMin": 4.8,
+          "notes": "Contrast on primary CTAs meets WCAG AA (4.5:1)."
+        },
+        "grid8pt": {
+          "passes": true,
+          "violationsCount": 0,
+          "notes": "All margins and paddings follow the 8px baseline rhythm."
+        },
+        "hierarchy": {
+          "passes": true,
+          "notes": "Primary visual anchor detected with clear secondary metadata."
+        },
+        "critiqueNotes": [
+          "Layout looks solid and cohesive.",
+          "Visual balance is well calibrated."
+        ],
+        "recommendations": [
+          "Ensure dark mode variant preserves text legibility on subtle backgrounds."
+        ]
+      },
+      "visualDiff": {
+        "hasDifference": true,
+        "diffPixelCount": 993541,
+        "totalPixels": 1024000,
+        "diffPercentage": 97.03,
+        "diffImagePath": "D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\diff-iter-3-vs-4.png",
+        "baselineIteration": 3,
+        "currentIteration": 4
+      },
+      "componentChanges": [
+        "src/components/Screen1789421839297View/Screen1789421839297View.tsx",
+        "src/components/Screen1789421839297View/types.ts",
+        "src/components/Screen1789421839297View/mockData.ts"
+      ]
+    },
+    {
+      "id": "iter-1789422452956-5",
+      "timestamp": "2026-09-14T21:47:32.956Z",
+      "iteration": 5,
+      "prompt": "CryptoVault - Institutional Web3 DeFi Portfolio & Liquidity Matrix (Official Google Stitch Reference with Obsidian Lumina Design System)",
+      "screenId": "screen-stitch-cryptovault",
+      "screenshotUrl": "file://D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\screen-stitch-cryptovault.png",
+      "localHtmlPath": ".stitch/designs/screen-stitch-cryptovault.html",
+      "localScreenshotPath": ".stitch/designs/screen-stitch-cryptovault.png",
+      "tasteReview": {
+        "status": "APPROVED",
+        "overallScore": 99,
+        "wcagContrast": {
+          "passes": true,
+          "contrastRatioMin": 7.2,
+          "notes": "Obsidian cyan & emerald meet WCAG AAA."
+        },
+        "grid8pt": {
+          "passes": true,
+          "violationsCount": 0,
+          "notes": "Strict 8pt rhythm, 12-col desktop, 4-col mobile collapse."
+        },
+        "hierarchy": {
+          "passes": true,
+          "notes": "Superb visual hierarchy, tabular mono numerals, micro-sparklines."
+        },
+        "critiqueNotes": [
+          "Producción Web3 de grado institucional con arquitectura Glassmorphism multinivel (tier-1, tier-2, tier-3).",
+          "Responsive total de 12 columnas a 4 columnas con tipografía Plus Jakarta Sans y JetBrains Mono.",
+          "Paleta calibrada Obsidian Lumina: Slate-950 con acento Cyan y Emerald sin estridencias."
+        ],
+        "recommendations": []
+      },
+      "visualDiff": {
+        "hasDifference": true,
+        "diffPixelCount": 735292,
+        "totalPixels": 1720320,
+        "diffPercentage": 42.74,
+        "diffImagePath": "D:\\DocumentosDiscoD\\googleStitch\\.stitch\\designs\\diff-iter-3-vs-5.png",
+        "baselineIteration": 3,
+        "currentIteration": 5
+      },
+      "componentChanges": []
     }
   ]
 }
